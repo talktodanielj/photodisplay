@@ -1,0 +1,180 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>finitescroll</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/waterfall.css">
+
+<!-- fancybox stuff -->
+<!-- Add jQuery library -->
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+
+<!-- Add fancyBox -->
+<link rel="stylesheet" href="/fancybox/source/jquery.fancybox.css?v=2.1.5" type="text/css" media="screen" />
+<script type="text/javascript" src="/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+<!-- Optionally add helpers - button, thumbnail and/or media -->
+<link rel="stylesheet" href="/fancybox/source/helpers/jquery.fancybox-buttons.css?v=1.0.5" type="text/css" media="screen" />
+<script type="text/javascript" src="/fancybox/source/helpers/jquery.fancybox-buttons.js?v=1.0.5"></script>
+<script type="text/javascript" src="/fancybox/source/helpers/jquery.fancybox-media.js?v=1.0.6"></script>
+
+<link rel="stylesheet" href="/fancybox/source/helpers/jquery.fancybox-thumbs.css?v=1.0.7" type="text/css" media="screen" />
+<script type="text/javascript" src="/fancybox/source/helpers/jquery.fancybox-thumbs.js?v=1.0.7"></script>
+
+<script type="text/css" media="screen" />
+    
+    .fancybox-title iframe {
+    min-height: 25px;
+    max-height: 100px;
+    vertical-align: middle;
+}
+
+.fancybox-overlay
+{
+    z-index: 1000000;
+}
+
+</script>
+
+<!-- fancybox stuff -->
+
+</head>
+<body >
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.3";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+<div id="header" style="z-index: 10;">
+    <h1>Daniel & Keema got married... </h1>
+
+<div class="fb-like inline" data-href="http://localhost:8333/no-more-data.html" data-width="200" data-layout="standard" data-action="like" data-show-faces="true" data-share="true"></div>
+
+</div>
+<div id="container"></div>
+<div id="page-navigation" class="hide clear">
+    <span class="disabled page-navigation-prev" title="上一页">«上一页</span>
+    <a href="?&p=1" data-target="page" data-page="1" class="cur">1</a>
+    <a href="?&p=2" data-target="page" data-page="2">2</a>
+    <a href="?&p=3" data-target="page" data-page="3">3</a>
+    <a href="?&p=4" data-target="page" data-page="4">4</a>
+    <a href="?&p=5" data-target="page" data-page="5">5</a>
+    <a href="?&p=6" data-target="page" data-page="6">6</a>
+    <a href="?&p=7" data-target="page" data-page="7">7</a>
+    <a href="?&p=8" data-target="page" data-page="8">8</a>
+    <a href="?&p=9" data-target="page" data-page="9">9</a>
+    <a href="?&p=10" data-target="page" data-page="10">10</a>
+    <a href="?&p=2" class="page-navigation-next"  data-page="2" title="下一页">下一页»</a>
+</div><!-- #page-navigation -->
+<script type="text/x-handlebars-template" id="waterfall-tpl">
+{{#result}}
+    <div class="item">
+        <a title="{{title}}"class="fancybox" rel="gallery" href="{{image-large}}">
+        <img src="{{image}}" width="{{width}}" height="{{height}}" />
+        </a>
+        <div style="font-size:10px">{{alt}}<div>
+    </div>
+{{/result}}
+</script>
+<!--script src="js/libs/jquery/jquery.js"></script-->
+<script src="js/libs/handlebars/handlebars.js"></script>
+<script src="js/waterfall.min.js"></script>
+<script>
+$('#container').waterfall({
+    itemCls: 'item',
+    colWidth: 222,  
+    gutterWidth: 15,
+    gutterHeight: 15,
+    maxPage: 5,
+    checkImagesLoaded: false,
+    callbacks: {
+        
+        loadingFinished: function($loading, isBeyondMaxPage) {
+            if ( !isBeyondMaxPage ) {
+                $loading.fadeOut();
+
+            } else {
+                $loading.hide();
+                $('#page-navigation').show();
+            }
+
+            //alert('loadingFinished');
+
+ $(".fancybox")
+    .attr('rel', 'gallery')
+
+    .fancybox({
+        autoSize: false,
+        fitToView: true,
+        beforeShow: function () {
+            if (this.title) {
+                // New line
+                //this.title += '<br />';
+                
+                // Add tweet button
+                //this.title += '<a href="https://twitter.com/share" class="twitter-share-button" data-count="none" data-url="' + this.href + '">Tweet</a> ';
+                
+                // Add FaceBook like button
+                //this.title += '<iframe src="//www.facebook.com/plugins/like.php?href=' + this.href + '&amp;layout=button_count&amp;show_faces=true&amp;width=500&amp;action=like&amp;font&amp;colorscheme=light&amp;height=23" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:110px; height:23px;" allowTransparency="true"></iframe>';
+            }
+        },
+        afterShow: function() {
+            // Render tweet button
+            //twttr.widgets.load();
+        },
+        helpers : {
+            title : {
+                type: 'inside'
+            }
+        }  
+    })
+    .fit;
+
+
+        },
+        renderData: function (data, dataType) {
+            var tpl,
+                template,
+                resultNum = data.total;
+                
+            if ( resultNum < 20) {
+                $('#container').waterfall('pause', function() {
+                    $('#waterfall-message').html('<p style="color:#666;">no more data...</p>')
+                    //alert('no more data');
+                });
+            }
+    
+            if ( dataType === 'json' ||  dataType === 'jsonp'  ) { // json or jsonp format
+                tpl = $('#waterfall-tpl').html();
+                template = Handlebars.compile(tpl);
+    
+                return template(data);
+            } else { // html format
+                return data;
+            }
+        }
+    },
+    path: function(page) {
+        return 'data/data' + page + '.json';
+    }
+});
+</script>
+<script type="text/javascript">
+/*var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-1245097-16']);
+_gaq.push(['_trackPageview']);
+_gaq.push(['_trackPageLoadTime']);
+(function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = 'https://ssl.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();*/
+</script>
+</body>
+</html>
