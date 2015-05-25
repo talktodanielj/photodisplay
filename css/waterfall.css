@@ -11,7 +11,7 @@ a:hover {
 #header {
     position: relative;
     z-index: 99997;
-    height: 85px;
+    height: 95px;
 	padding: 0 30px;
     margin-bottom: 20px;
     border-bottom: 1px solid #e0dede;
@@ -29,6 +29,14 @@ a:hover {
     line-height: 38px;
     margin: 0;
 }
+
+#header h4 {
+    font-size: 12px;
+    line-height: 24px;
+    margin: 0;
+    font-style: italic;
+}
+
 
 /*
  * waterfall
