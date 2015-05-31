@@ -1,13 +1,5 @@
 <!doctype html>
 <html>
-
-<meta property="og:title" content="Daniel & Keema got married..." />
-<meta property="og:type" content="website" />
-<meta property="og:site_name" content="Daniel & Keema"/>
-<meta property="og:url" content="http://danielandkeema.net/wedding.html" />
-<meta property="og:image" content="http://danielandkeema.net/data/small/Keema_&_Dan_Wedding001.jpg" />
-<meta property="og:description" content="Photos from Daniel and Keema's wedding, Aprill 2015 at their Woodhill cottage" />
-
 <head>
     <meta charset="UTF-8">
     <title>Daniel & Keema</title>
@@ -21,6 +13,7 @@
 
 <!-- Add fancyBox -->
 <link rel="stylesheet" href="/fancybox/source/jquery.fancybox.css?v=2.1.5" type="text/css" media="screen" />
+<!-- <script type="text/javascript" src="/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script> -->
 <script type="text/javascript" src="/fancybox/source/jquery.fancybox.js?v=2.1.5"></script>
 
 <!-- Optionally add helpers - button, thumbnail and/or media -->
@@ -48,9 +41,6 @@
 
 <!-- fancybox stuff -->
 
-<script type="text/javascript" src="/js/libs/jquery/jquery.event.move.js"></script>
-<script type="text/javascript" src="/js/libs/jquery/jquery.event.swipe.js"></script>
-
 </head>
 <body >
 <div id="fb-root"></div>
@@ -67,12 +57,27 @@
     <h1>Daniel & Keema got married... </h1>
 <div style="float:left"><h4>11th April 2015, Woodhill</h4></div><div align="center"><h5>Please scroll down to load more photos...</h5></div>
 
-<div class="fb-like" data-href="http://danielandkeema.net/wedding.html" data-layout="button" data-action="like" data-show-faces="false" data-share="true"></div>
+<div class="fb-like inline" data-href="http://localhost:8333/no-more-data.html" data-width="300" data-layout="standard" data-action="like" data-show-faces="true" data-share="true"></div>
 
 </div>
 <div id="container"></div>
+<!-- <div id="page-navigation" class="hide clear">
+    <span class="disabled page-navigation-prev" title="上一页">«上一页</span>
+    <a href="?&p=1" data-target="page" data-page="1" class="cur">1</a>
+    <a href="?&p=2" data-target="page" data-page="2">2</a>
+    <a href="?&p=3" data-target="page" data-page="3">3</a>
+    <a href="?&p=4" data-target="page" data-page="4">4</a>
+    <a href="?&p=5" data-target="page" data-page="5">5</a>
+    <a href="?&p=6" data-target="page" data-page="6">6</a>
+    <a href="?&p=7" data-target="page" data-page="7">7</a>
+    <a href="?&p=8" data-target="page" data-page="8">8</a>
+    <a href="?&p=9" data-target="page" data-page="9">9</a>
+    <a href="?&p=10" data-target="page" data-page="10">10</a>
+    <a href="?&p=2" class="page-navigation-next"  data-page="2" title="下一页">下一页»</a>
+</div> --><!-- #page-navigation -->
 
 <div id="list-data"></div>
+
 
 <script type="text/x-handlebars-template" id="waterfall-tpl">
 {{#result}}
@@ -80,7 +85,7 @@
         <a title="{{title}}"class="fancybox" rel="gallery" href="{{image-large}}">
         <img src="{{image}}" width="{{width}}" height="{{height}}" />
         </a>
-        <!--div style="font-size:10px">{{alt}}<div-->
+        <div style="font-size:10px">{{alt}}<div>
     </div>
 {{/result}}
 </script>
@@ -89,6 +94,37 @@
 <script src="js/libs/handlebars/handlebars.js"></script>
 <script src="js/waterfall.min.js"></script>
 <script>
+
+var maxPageCount = 7;
+
+function loadDataList(datafile){
+  var dataURL = datafile;
+  $.getJSON( dataURL, {
+    format: "json"
+  })
+    .done(function( data ) {
+      
+var source = $("#list-template").html(); 
+var template = Handlebars.compile(source); 
+
+
+Handlebars.registerHelper('list', function(items, options) {
+  var out = "<ul>";
+
+  for(var i=0, l=items.length; i<l; i++) {
+    out = out + "<li>" + options.fn(items[i]) + "</li>";
+  }
+
+  return out + "</ul>";
+});
+
+$('#list-data').append(template(data));
+
+
+
+
+    });
+};
 
 function LoadFancyBox()
 {
@@ -115,27 +151,25 @@ function LoadFancyBox()
         afterShow: function() {
             // Render tweet button
             //twttr.widgets.load();
-            //console.log('In afterShow function');
+            console.log('In afterShow function');
         },
         afterLoad: function() {
             
-            //console.log('In afterload function length' + this.group.length + ' index ' + this.index);
+            console.log('In afterload function length' + this.group.length + ' index ' + this.index);
             if(this.index == this.group.length-2){
-               //console.log('Scrolling...');     
+               console.log('Scrolling...');     
                window.scrollBy(0,document.body.clientHeight+10); 
             }
 
         },
-       helpers: { 
-        title: null
-    }
-        /*helpers : {
+        helpers : {
             title : {
                 type: 'inside'
             }
-        }*/  
+        }  
     })
     .fit;
+
 }
 
 
@@ -151,36 +185,70 @@ $('#container').waterfall({
         loadingFinished: function($loading, isBeyondMaxPage) {
             if ( !isBeyondMaxPage ) {
                 $loading.fadeOut();
-            } 
-            else {
+
+            } else {
                 $loading.hide();
                 $('#page-navigation').show();
             }
 
             //alert('loadingFinished');
-            //console.log('loading data');
+            console.log('loading data');
             LoadFancyBox();
 
-            
-            if(typeof $.fancybox !== "undefined"){
+if($(".fancybox") != null){
 
-                var fancyBoxCount = $.fancybox.group.length;
-                var newFancyBoxCount = $(".fancybox").length;
+            var fancyBoxElementCount = $(".fancybox").length;
+            console.log('Element count =' + fancyBoxElementCount);
+}
 
-                if(newFancyBoxCount > fancyBoxCount){
-                    var dataArray = $(".fancybox");
-                    //var arrayObj = $.parseJSON('{"href": "./data/large/Keema & Dan_Wedding035.jpg", "type": "image", "title": "Picture 04", "isDom": "false" }');
+if(typeof $.fancybox !== "undefined"){
 
-                    $.each(dataArray, function(index){
-                        if(index >= fancyBoxCount){
-                            var jsonString = '{"href": "' + dataArray[index].href + '", "type": "image", "isDom": "false" }'
-                            var arrayObj = $.parseJSON(jsonString);
-                            $.fancybox.group[$.fancybox.group.length] = arrayObj;
-                        }
-                    });
-                }
+            var fancyBoxCount = $.fancybox.group.length;
+            var newFancyBoxCount = $(".fancybox").length;
+            //console.log('Other Element count =' + fancyBoxElementCount);
+
+            //var newObj = $.fancybox.group[1];
+            //console.log(newObj);
+
+            if(newFancyBoxCount > fancyBoxCount)
+            {
+                var dataArray = $(".fancybox");
+                //var arrayObj = $.parseJSON('{"href": "./data/large/Keema & Dan_Wedding035.jpg", "type": "image", "title": "Picture 04", "isDom": "false" }');
+
+                $.each(dataArray, function(index){
+                    if(index >= fancyBoxCount){
+
+                    var jsonString = '{"href": "' + dataArray[index].href + '", "type": "image", "title": "Picture 04", "isDom": "false" }'
+                    var arrayObj = $.parseJSON(jsonString);
+                    $.fancybox.group[$.fancybox.group.length] = arrayObj;
+                    }
+                });
             }
-           },
+
+            //console.log('arrayObj length' + arrayObj);
+
+            //$.fancybox.group[$.fancybox.group.length] = arrayObj;
+
+            //var theIndex = $(".fancybox").length;
+
+            //var newObj = $(".fancybox")[theIndex];
+            //console.log(newObj);
+
+            //$fancybox.group.push();
+
+            // $.each( $(".fancybox"), function( index, value ){
+            //     console.log(value);
+            // });
+
+
+            // $.each( $.fancybox.group, function( index, value ){
+            //     console.log(value);
+            // });
+}
+
+
+
+        },
         renderData: function (data, dataType) {
             var tpl,
                 template,
@@ -206,9 +274,81 @@ $('#container').waterfall({
     path: function(page) {
 
         var path = 'data/data' + page + '.json';
+        loadDataList(path);
+
         return path;
     }
 });
+</script>
+
+
+<script id="list-template" type="text/x-handlebars-template"> 
+
+{{#list result}}{{image-large}}{{/list}}
+
+</script>
+
+
+<script type="text/javascript">
+
+// var peopleData = {
+//   people: [
+//     {firstName: "Yehuda", lastName: "Katz"},
+//     {firstName: "Carl", lastName: "Lerche"},
+//     {firstName: "Alan", lastName: "Johnson"}
+//   ]
+// }
+
+// var source = $("#list-template").html(); 
+// var template = Handlebars.compile(source); 
+
+
+// Handlebars.registerHelper('list', function(items, options) {
+//   var out = "<ul>";
+
+//   for(var i=0, l=items.length; i<l; i++) {
+//     out = out + "<li>" + options.fn(items[i]) + "</li>";
+//   }
+
+//   return out + "</ul>";
+// });
+
+// $('#list-data').append(template(peopleData));
+
+
+</script>
+
+
+
+<script>
+// function loadDataList(datafile){
+//   var dataURL = "http://localhost:8333/data/data1.json";
+//   $.getJSON( dataURL, {
+//     format: "json"
+//   })
+//     .done(function( data ) {
+      
+// var source = $("#list-template").html(); 
+// var template = Handlebars.compile(source); 
+
+
+// Handlebars.registerHelper('list', function(items, options) {
+//   var out = "<ul>";
+
+//   for(var i=0, l=items.length; i<l; i++) {
+//     out = out + "<li>" + options.fn(items[i]) + "</li>";
+//   }
+
+//   return out + "</ul>";
+// });
+
+// $('#list-data').append(template(data));
+
+
+
+
+//     });
+// };
 </script>
 
 
